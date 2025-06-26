@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Gaming - Interactive Demo</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .demo-section {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .demo-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #ffeb3b;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .game-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .player {
+            width: 40px;
+            height: 40px;
+            background: #4CAF50;
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .npc {
+            width: 35px;
+            height: 35px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.5s ease;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .smart-npc {
+            background: #ff9f43;
+            box-shadow: 0 0 15px rgba(255, 159, 67, 0.8);
+        }
+        
+        .obstacle {
+            width: 30px;
+            height: 30px;
+            background: #6c5ce7;
+            position: absolute;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .info-box {
+            background: rgba(255, 235, 59, 0.2);
+            border: 2px solid #ffeb3b;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ffeb3b;
+        }
+        
+        .difficulty-indicator {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .difficulty-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #ff9800, #f44336);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .bouncing {
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 159, 67, 0.8); }
+            50% { box-shadow: 0 0 25px rgba(255, 159, 67, 1); }
+        }
+        
+        .glowing {
+            animation: glow 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 AI in Gaming 🤖</h1>
+        <p class="subtitle">Learn how AI makes games smarter and more fun!</p>
+        
+        <div class="demo-section">
+            <h3 class="demo-title">1. 🧠 Intelligent Behaviors - Smart NPCs</h3>
+            <div class="info-box">
+                <strong>What's happening:</strong> The orange NPC (🤖) is smart! It watches where you move and tries to follow you. The red NPCs (👾) just move randomly.
+            </div>
+            <div class="game-area" id="game1">
+                <div class="player" id="player1" style="left: 50px; top: 50px;">😊</div>
+                <div class="npc" id="npc1" style="left: 200px; top: 100px;">👾</div>
+                <div class="npc smart-npc glowing" id="smartNpc1" style="left: 300px; top: 150px;">🤖</div>
+            </div>
+            <div class="controls">
+                <button onclick="movePlayer(1, 'left')">⬅️ Move Left</button>
+                <button onclick="movePlayer(1, 'right')">➡️ Move Right</button>
+                <button onclick="movePlayer(1, 'up')">⬆️ Move Up</button>
+                <button onclick="movePlayer(1, 'down')">⬇️ Move Down</button>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3 class="demo-title">2. 🎯 Responsive Game Elements</h3>
+            <div class="info-box">
+                <strong>What's happening:</strong> The purple blocks (obstacles) move away when you get close to them! The game responds to your actions.
+            </div>
+            <div class="game-area" id="game2">
+                <div class="player" id="player2" style="left: 100px; top: 80px;">😊</div>
+                <div class="obstacle" id="obstacle1" style="left: 200px; top: 100px;"></div>
+                <div class="obstacle" id="obstacle2" style="left: 150px; top: 50px;"></div>
+                <div class="obstacle" id="obstacle3" style="left: 250px; top: 150px;"></div>
+            </div>
+            <div class="controls">
+                <button onclick="movePlayer(2, 'left')">⬅️ Move Left</button>
+                <button onclick="movePlayer(2, 'right')">➡️ Move Right</button>
+                <button onclick="movePlayer(2, 'up')">⬆️ Move Up</button>
+                <button onclick="movePlayer(2, 'down')">⬇️ Move Down</button>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3 class="demo-title">3. 🎲 Enhanced Player Experience - Adaptive Difficulty</h3>
+            <div class="info-box">
+                <strong>What's happening:</strong> The game gets harder or easier based on how well you're doing! If you're winning too much, more enemies appear. If you're struggling, some disappear.
+            </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="score">0</div>
+                    <div>Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="enemyCount">2</div>
+                    <div>Enemies</div>
+                </div>
+            </div>
+            <div class="difficulty-indicator">
+                <div class="difficulty-bar" id="difficultyBar" style="width: 30%;"></div>
+            </div>
+            <div class="game-area" id="game3">
+                <div class="player" id="player3" style="left: 50px; top: 50px;">😊</div>
+                <div class="npc bouncing" id="enemy1" style="left: 200px; top: 80px;">👹</div>
+                <div class="npc bouncing" id="enemy2" style="left: 300px; top: 120px;">👹</div>
+            </div>
+            <div class="controls">
+                <button onclick="catchEnemy()">🎯 Catch Enemy!</button>
+                <button onclick="resetGame()">🔄 Reset Game</button>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3 class="demo-title">4. 📚 Learning NPCs - They Remember!</h3>
+            <div class="info-box">
+                <strong>What's happening:</strong> This NPC learns your favorite hiding spots! The more you go to the same corner, the smarter it gets at finding you there.
+            </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="topLeft">0</div>
+                    <div>Top Left Visits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="topRight">0</div>
+                    <div>Top Right Visits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="botLeft">0</div>
+                    <div>Bottom Left Visits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="botRight">0</div>
+                    <div>Bottom Right Visits</div>
+                </div>
+            </div>
+            <div class="game-area" id="game4">
+                <div class="player" id="player4" style="left: 150px; top: 100px;">😊</div>
+                <div class="npc smart-npc glowing" id="learningNpc" style="left: 50px; top: 50px;">🧠</div>
+            </div>
+            <div class="controls">
+                <button onclick="hideInCorner('topLeft')">🏠 Hide Top Left</button>
+                <button onclick="hideInCorner('topRight')">🏠 Hide Top Right</button>
+                <button onclick="hideInCorner('botLeft')">🏠 Hide Bottom Left</button>
+                <button onclick="hideInCorner('botRight')">🏠 Hide Bottom Right</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state variables
+        let gameState = {
+            score: 0,
+            enemyCount: 2,
+            difficulty: 0.3,
+            playerPositions: {
+                1: {x: 50, y: 50},
+                2: {x: 100, y: 80},
+                3: {x: 50, y: 50},
+                4: {x: 150, y: 100}
+            },
+            cornerVisits: {
+                topLeft: 0,
+                topRight: 0,
+                botLeft: 0,
+                botRight: 0
+            }
+        };
+
+        // Move player function
+        function movePlayer(gameNum, direction) {
+            const player = document.getElementById(`player${gameNum}`);
+            const gameArea = document.getElementById(`game${gameNum}`);
+            const rect = gameArea.getBoundingClientRect();
+            
+            let currentLeft = parseInt(player.style.left) || 0;
+            let currentTop = parseInt(player.style.top) || 0;
+            
+            const step = 40;
+            
+            switch(direction) {
+                case 'left':
+                    currentLeft = Math.max(0, currentLeft - step);
+                    break;
+                case 'right':
+                    currentLeft = Math.min(rect.width - 40, currentLeft + step);
+                    break;
+                case 'up':
+                    currentTop = Math.max(0, currentTop - step);
+                    break;
+                case 'down':
+                    currentTop = Math.min(rect.height - 40, currentTop + step);
+                    break;
+            }
+            
+            player.style.left = currentLeft + 'px';
+            player.style.top = currentTop + 'px';
+            
+            gameState.playerPositions[gameNum] = {x: currentLeft, y: currentTop};
+            
+            // Trigger AI behaviors based on game
+            if (gameNum === 1) {
+                followPlayer();
+            } else if (gameNum === 2) {
+                moveObstacles();
+            }
+        }
+
+        // Smart NPC follows player
+        function followPlayer() {
+            const player = gameState.playerPositions[1];
+            const smartNpc = document.getElementById('smartNpc1');
+            
+            const currentLeft = parseInt(smartNpc.style.left);
+            const currentTop = parseInt(smartNpc.style.top);
+            
+            let newLeft = currentLeft;
+            let newTop = currentTop;
+            
+            // Simple AI: move towards player
+            if (player.x > currentLeft) newLeft += 20;
+            else if (player.x < currentLeft) newLeft -= 20;
+            
+            if (player.y > currentTop) newTop += 20;
+            else if (player.y < currentTop) newTop -= 20;
+            
+            smartNpc.style.left = newLeft + 'px';
+            smartNpc.style.top = newTop + 'px';
+        }
+
+        // Obstacles move away from player
+        function moveObstacles() {
+            const player = gameState.playerPositions[2];
+            
+            for (let i = 1; i <= 3; i++) {
+                const obstacle = document.getElementById(`obstacle${i}`);
+                const obsLeft = parseInt(obstacle.style.left);
+                const obsTop = parseInt(obstacle.style.top);
+                
+                const distance = Math.sqrt((player.x - obsLeft) ** 2 + (player.y - obsTop) ** 2);
+                
+                // If player is close, move obstacle away
+                if (distance < 80) {
+                    let newLeft = obsLeft;
+                    let newTop = obsTop;
+                    
+                    if (player.x > obsLeft) newLeft -= 30;
+                    else newLeft += 30;
+                    
+                    if (player.y > obsTop) newTop -= 30;
+                    else newTop += 30;
+                    
+                    obstacle.style.left = Math.max(0, Math.min(350, newLeft)) + 'px';
+                    obstacle.style.top = Math.max(0, Math.min(170, newTop)) + 'px';
+                }
+            }
+        }
+
+        // Catch enemy function for adaptive difficulty
+        function catchEnemy() {
+            gameState.score += 10;
+            gameState.difficulty = Math.min(1, gameState.difficulty + 0.1);
+            
+            // Adaptive difficulty: add more enemies if score is high
+            if (gameState.score > 50 && gameState.enemyCount < 4) {
+                addEnemy();
+            }
+            
+            updateDifficultyDisplay();
+            
+            // Move existing enemies to new positions
+            const enemies = document.querySelectorAll('#game3 .npc');
+            enemies.forEach(enemy => {
+                enemy.style.left = Math.random() * 300 + 'px';
+                enemy.style.top = Math.random() * 150 + 'px';
+            });
+        }
+
+        function addEnemy() {
+            gameState.enemyCount++;
+            const gameArea = document.getElementById('game3');
+            const newEnemy = document.createElement('div');
+            newEnemy.className = 'npc bouncing';
+            newEnemy.id = `enemy${gameState.enemyCount}`;
+            newEnemy.innerHTML = '👹';
+            newEnemy.style.left = Math.random() * 300 + 'px';
+            newEnemy.style.top = Math.random() * 150 + 'px';
+            gameArea.appendChild(newEnemy);
+        }
+
+        function updateDifficultyDisplay() {
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('enemyCount').textContent = gameState.enemyCount;
+            document.getElementById('difficultyBar').style.width = (gameState.difficulty * 100) + '%';
+        }
+
+        function resetGame() {
+            gameState.score = 0;
+            gameState.difficulty = 0.3;
+            gameState.enemyCount = 2;
+            
+            // Remove extra enemies
+            const gameArea = document.getElementById('game3');
+            const enemies = gameArea.querySelectorAll('.npc');
+            enemies.forEach((enemy, index) => {
+                if (index >= 2) enemy.remove();
+            });
+            
+            updateDifficultyDisplay();
+        }
+
+        // Learning NPC function
+        function hideInCorner(corner) {
+            gameState.cornerVisits[corner]++;
+            
+            const positions = {
+                topLeft: {x: 20, y: 20},
+                topRight: {x: 320, y: 20},
+                botLeft: {x: 20, y: 150},
+                botRight: {x: 320, y: 150}
+            };
+            
+            const player = document.getElementById('player4');
+            player.style.left = positions[corner].x + 'px';
+            player.style.top = positions[corner].y + 'px';
+            
+            // Update visit counters
+            document.getElementById('topLeft').textContent = gameState.cornerVisits.topLeft;
+            document.getElementById('topRight').textContent = gameState.cornerVisits.topRight;
+            document.getElementById('botLeft').textContent = gameState.cornerVisits.botLeft;
+            document.getElementById('botRight').textContent = gameState.cornerVisits.botRight;
+            
+            // Learning AI: NPC learns your favorite spot
+            setTimeout(() => {
+                const learningNpc = document.getElementById('learningNpc');
+                const mostVisited = Object.keys(gameState.cornerVisits).reduce((a, b) => 
+                    gameState.cornerVisits[a] > gameState.cornerVisits[b] ? a : b
+                );
+                
+                if (gameState.cornerVisits[mostVisited] > 2) {
+                    // NPC goes to your favorite corner!
+                    learningNpc.style.left = positions[mostVisited].x + 'px';
+                    learningNpc.style.top = positions[mostVisited].y + 'px';
+                }
+            }, 1000);
+        }
+
+        // Initialize random movements for regular NPCs
+        setInterval(() => {
+            const npc1 = document.getElementById('npc1');
+            if (npc1) {
+                npc1.style.left = Math.random() * 300 + 'px';
+                npc1.style.top = Math.random() * 150 + 'px';
+            }
+        }, 2000);
+
+        // Initialize the display
+        updateDifficultyDisplay();
+    </script>
+</body>
+</html>
